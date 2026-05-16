@@ -23,8 +23,8 @@ export default function CursorGlow() {
     <div
       className="cursor-glow"
       style={{
-        left: pos.x,
-        top: pos.y,
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
         opacity: visible ? 1 : 0,
       }}
     />
