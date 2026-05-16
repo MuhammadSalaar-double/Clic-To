@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import CanvasStage from "@/components/canvas/CanvasStage";
 import EffectSelector from "@/components/canvas/EffectSelector";
 import SettingsPanel from "@/components/canvas/SettingsPanel";
@@ -32,29 +32,55 @@ export default function CanvasPage() {
   // Apply selected effects
   useEffect(() => {
     if (engine && engineReady) {
-      engine.setActiveEffects(mode === "single" ? [selectedEffects[0]] : selectedEffects);
+      const active =
+        mode === "single"
+          ? [selectedEffects[0] || "sparkles"]   // fallback to avoid undefined
+          : selectedEffects;
+      engine.setActiveEffects(active);
     }
   }, [selectedEffects, mode, engine, engineReady]);
 
   // Handle voice transcript as a custom text effect
   useEffect(() => {
     if (transcript && engine && engineReady) {
-      engine.addEffect("customText", { x: window.innerWidth / 2, y: window.innerHeight / 2, text: transcript });
+      engine.addEffect("customText", {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        text: transcript,
+      });
     }
   }, [transcript, engine, engineReady]);
 
   return (
-    <div className={`min-h-screen ${theme === "neon" ? "bg-gray-900 text-white" : "bg-white text-luxury-charcoal"}`}>
+    <div
+      className={`min-h-screen ${
+        theme === "neon"
+          ? "bg-gray-900 text-white"
+          : "bg-white text-luxury-charcoal"
+      }`}
+    >
       <CursorGlow />
       <div className="flex flex-col lg:flex-row">
         <aside className="w-full lg:w-80 p-6 glass m-4 space-y-6">
           <h2 className="font-serif text-2xl">Effects</h2>
-          <EffectSelector selected={selectedEffects} onChange={setSelectedEffects} mode={mode} />
+          <EffectSelector
+            selected={selectedEffects}
+            onChange={setSelectedEffects}
+            mode={mode}
+          />
           <ModeToggle mode={mode} onChange={setMode} />
           <SettingsPanel engine={engine} />
-          <SoundSelector onSelect={setSoundType} enabled={soundEnabled} onToggle={toggleSound} />
+          <SoundSelector
+            onSelect={setSoundType}
+            enabled={soundEnabled}
+            onToggle={toggleSound}
+          />
           <ImageUploader onImage={(img) => engine?.setCustomImage(img)} />
-          <VoiceInput listening={listening} onStart={startListening} onStop={stopListening} />
+          <VoiceInput
+            listening={listening}
+            onStart={startListening}
+            onStop={stopListening}
+          />
           <ExportControls canvasRef={canvasRef} />
           <button
             onClick={toggleTheme}
