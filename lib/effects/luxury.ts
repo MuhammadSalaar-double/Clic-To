@@ -7,59 +7,67 @@ export function createGoldenParticles(config: EffectConfig, _img?: HTMLImageElem
     return new Particle({
       x: config.x,
       y: config.y,
-      vx: (Math.random() - 0.5) * 1.5,
-      vy: (Math.random() - 0.5) * 1.5,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
       life: 2,
-      size: 2 + Math.random() * 3,
+      size: 3 + Math.random() * 5,
       color,
-      type: "circle",
+      type: "shape",
+      shape: "sparkle",
+      hue: 45,
     });
   });
 }
 
 export function createDiamonds(config: EffectConfig) {
-  return Array.from({ length: 10 }, () => {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 1 + Math.random() * 2;
+  return Array.from({ length: 6 }, () => {
     return new Particle({
-      x: config.x,
-      y: config.y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      life: 1.5 + Math.random(),
-      size: 4 + Math.random() * 5,
-      color: "#e0f7fa", // icy blue-white
-      type: "circle",
+      x: config.x + (Math.random() - 0.5) * 10,
+      y: config.y + (Math.random() - 0.5) * 10,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5,
+      life: 2,
+      size: 12 + Math.random() * 12,
+      color: "#e0f7fa",
+      type: "shape",
+      shape: "diamond",
+      hue: 190,
     });
   });
 }
 
 export function createCrystal(config: EffectConfig) {
-  return Array.from({ length: 20 }, () => {
+  return Array.from({ length: 8 }, () => {
     return new Particle({
-      x: config.x + (Math.random() - 0.5) * 8,
-      y: config.y + (Math.random() - 0.5) * 8,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: (Math.random() - 0.5) * 0.8,
-      life: 2,
-      size: 3 + Math.random() * 6,
-      color: `hsl(${Math.random() * 60 + 180}, 80%, 80%)`,
-      type: "circle",
+      x: config.x + (Math.random() - 0.5) * 15,
+      y: config.y + (Math.random() - 0.5) * 15,
+      vx: (Math.random() - 0.5) * 1,
+      vy: (Math.random() - 0.5) * 1,
+      life: 2.5,
+      size: 10 + Math.random() * 14,
+      color: `hsl(${Math.random() * 60 + 180}, 30%, 75%)`,
+      type: "shape",
+      shape: "crystal",
+      hue: 190,
     });
   });
 }
 
 export function createGlowingOrbs(config: EffectConfig) {
-  return Array.from({ length: 6 }, () => {
+  const hues = [280, 320, 180, 40, 200];
+  return Array.from({ length: 4 }, () => {
+    const h = hues[Math.floor(Math.random() * hues.length)];
     return new Particle({
-      x: config.x + (Math.random() - 0.5) * 15,
-      y: config.y + (Math.random() - 0.5) * 15,
+      x: config.x + (Math.random() - 0.5) * 20,
+      y: config.y + (Math.random() - 0.5) * 20,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.5,
       life: 3,
-      size: 15 + Math.random() * 15,
-      color: `hsl(${Math.random() * 360}, 80%, 70%)`,
-      type: "circle",
+      size: 18 + Math.random() * 18,
+      color: `hsl(${h}, 80%, 60%)`,
+      type: "shape",
+      shape: "glowOrb",
+      hue: h,
     });
   });
 }
