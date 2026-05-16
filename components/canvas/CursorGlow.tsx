@@ -6,6 +6,9 @@ export default function CursorGlow() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Disable cursor glow on canvas page (canvas has its own feedback)
+    if (window.location.pathname === "/canvas") return;
+
     const move = (e: MouseEvent) => {
       setPos({ x: e.clientX, y: e.clientY });
       setVisible(true);
