@@ -1,5 +1,4 @@
-import { Mic, MicOff } from "lucide-react"; // optional, can use emoji
-
+"use client";
 interface VoiceInputProps {
   listening: boolean;
   onStart: () => void;
