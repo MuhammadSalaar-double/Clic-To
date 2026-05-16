@@ -22,7 +22,9 @@ export interface ParticleOptions {
   life?: number;
   size?: number;
   color?: string;
-  type?: "circle" | "image" | "text";
+  type?: "circle" | "image" | "text" | "shape";  // ✅ added "shape"
+  shape?: string;                                 // ✅ new
+  hue?: number;                                   // ✅ new
   image?: HTMLImageElement;
   text?: string;
 }
