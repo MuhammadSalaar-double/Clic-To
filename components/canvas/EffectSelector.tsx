@@ -9,6 +9,7 @@ const categories: { name: string; effects: EffectId[] }[] = [
   { name: "Artistic", effects: ["inkDiffusion", "watercolor", "smoke", "neonPaint"] },
   { name: "Typing", effects: ["customText", "calligraphy"] },
   { name: "Physics", effects: ["bouncingBalls", "liquid", "magneticParticles"] },
+  { name: "Custom", effects: ["customImage"] },   // <-- added for uploaded images
 ];
 
 interface EffectSelectorProps {
