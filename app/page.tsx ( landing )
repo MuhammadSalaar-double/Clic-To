@@ -1,0 +1,26 @@
+"use client";
+import Hero from "@/components/landing/Hero";
+import FeatureCards from "@/components/landing/FeatureCards";
+import Gallery from "@/components/landing/Gallery";
+import TrendingEffects from "@/components/landing/TrendingEffects";
+import Templates from "@/components/landing/Templates";
+import CTA from "@/components/landing/CTA";
+import Footer from "@/components/landing/Footer";
+import AnimatedBackground from "@/components/landing/AnimatedBackground";
+import CursorGlow from "@/components/canvas/CursorGlow";
+
+export default function LandingPage() {
+  return (
+    <main className="relative min-h-screen overflow-hidden">
+      <AnimatedBackground />
+      <CursorGlow />
+      <Hero />
+      <FeatureCards />
+      <Gallery />
+      <TrendingEffects />
+      <Templates />
+      <CTA />
+      <Footer />
+    </main>
+  );
+}
