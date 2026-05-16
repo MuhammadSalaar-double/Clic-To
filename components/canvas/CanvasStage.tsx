@@ -1,11 +1,12 @@
+"use client";
 import { forwardRef } from "react";
 
-const CanvasStage = forwardRef<HTMLCanvasElement>((props, ref) => {
+const CanvasStage = forwardRef<HTMLCanvasElement>((_props, ref) => {
   return (
     <canvas
       ref={ref}
-      className="w-full h-full bg-white rounded-2xl shadow-inner"
-      style={{ touchAction: "none" }} // prevent scroll on touch
+      className="absolute inset-0 w-full h-full"
+      style={{ touchAction: "none" }}
     />
   );
 });
