@@ -7,9 +7,11 @@ export function createCursorTrail(config: EffectConfig) {
     y: config.y,
     vx: 0, vy: 0,
     life: 0.3,
-    size: 3,
+    size: 4,
     color: "#1ae2ff",
-    type: "circle",
+    type: "shape",
+    shape: "sparkle",
+    hue: 190,
   })];
 }
 
@@ -18,12 +20,14 @@ export function createInkSplash(config: EffectConfig) {
     return new Particle({
       x: config.x,
       y: config.y,
-      vx: (Math.random() - 0.5) * 3,
-      vy: (Math.random() - 0.5) * 3,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 0.5) * 4,
       life: 1.5,
-      size: 2 + Math.random() * 8,
-      color: `hsl(0, 0%, ${Math.random() * 80}%)`,
-      type: "circle",
+      size: 3 + Math.random() * 10,
+      color: `hsl(0, 0%, ${Math.random() * 70}%)`,
+      type: "shape",
+      shape: "waterBlob",
+      hue: 0,
     });
   });
 }
@@ -33,11 +37,13 @@ export function createCustomImage(config: EffectConfig, customImage?: HTMLImageE
   return [new Particle({
     x: config.x,
     y: config.y,
-    vx: (Math.random() - 0.5) * 2,
-    vy: -1 - Math.random() * 2,
-    life: 1,
-    size: 30,
+    vx: 0,
+    vy: -0.3,
+    life: 2,
+    size: 40,
+    color: "#fff",
     type: "image",
     image: customImage,
+    hue: 0,
   })];
 }
