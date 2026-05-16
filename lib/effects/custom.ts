@@ -1,3 +1,6 @@
+import { Particle } from "@/lib/engine/Particle";
+import { EffectConfig } from "@/lib/types";
+
 export function createCursorTrail(config: EffectConfig) {
   return [new Particle({
     x: config.x,
