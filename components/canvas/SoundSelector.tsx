@@ -1,3 +1,4 @@
+"use client";
 interface SoundSelectorProps {
   onSelect: (sound: string) => void;
   enabled: boolean;
