@@ -9,7 +9,7 @@ export function useInputManager(
   engine: AnimationEngine | null,
   playSound: () => void,
   activeEffects: EffectId[],
-  mode: "single" | "multi"
+  _mode?: "single" | "multi" // kept for interface compatibility, unused
 ) {
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -37,7 +37,10 @@ export function useInputManager(
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key.length === 1) {
-        engine.addEffect("customText", { x: 300, y: 300, text: e.key });
+        // Use the center of the canvas for text
+        const x = canvas.width / 2;
+        const y = canvas.height / 2;
+        engine.addEffect("customText", { x, y, text: e.key });
         playSound();
       }
     };
@@ -67,5 +70,5 @@ export function useInputManager(
       canvas.removeEventListener("touchstart", handleTouchStart);
       canvas.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [canvasRef, engine, playSound, activeEffects, mode]);
+  }, [canvasRef, engine, playSound, activeEffects]);
 }
