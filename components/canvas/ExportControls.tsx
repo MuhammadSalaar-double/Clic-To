@@ -1,3 +1,4 @@
+"use client";
 import { useRef, useState } from "react";
 
 export default function ExportControls({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> }) {
