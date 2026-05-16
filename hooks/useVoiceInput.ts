@@ -5,31 +5,52 @@ export function useVoiceInput() {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  const initRecognition = () => {
-    if (typeof window !== "undefined" && !recognitionRef.current) {
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.onresult = (event: any) => {
-          const last = event.results[event.results.length - 1][0].transcript;
-          setTranscript(last);
-          setListening(false);
-        };
-        recognitionRef.current.onerror = () => setListening(false);
-        recognitionRef.current.onend = () => setListening(false);
+  const initRecognition = useCallback(() => {
+    if (typeof window === "undefined") return null;
+    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return null;
+
+    const rec = new SpeechRecognition();
+    rec.continuous = false;
+    rec.interimResults = false;
+
+    rec.onresult = (event: any) => {
+      const last = event.results[event.results.length - 1];
+      if (last) {
+        setTranscript(last[0].transcript);
       }
-    }
-  };
+      setListening(false);
+    };
+
+    rec.onerror = () => {
+      setListening(false);
+      // Invalidate the instance so a new one is created next time
+      recognitionRef.current = null;
+    };
+
+    rec.onend = () => {
+      setListening(false);
+    };
+
+    return rec;
+  }, []);
 
   const startListening = useCallback(() => {
-    initRecognition();
-    if (recognitionRef.current) {
+    // Always create a fresh instance to avoid dead/error states
+    const rec = initRecognition();
+    if (!rec) return;
+
+    recognitionRef.current = rec;
+
+    try {
+      rec.start();
       setListening(true);
-      recognitionRef.current.start();
+    } catch (err) {
+      console.warn("Speech recognition start failed", err);
+      recognitionRef.current = null;
+      setListening(false);
     }
-  }, []);
+  }, [initRecognition]);
 
   const stopListening = useCallback(() => {
     recognitionRef.current?.stop();
