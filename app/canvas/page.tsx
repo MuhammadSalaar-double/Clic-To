@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import CanvasStage from "@/components/canvas/CanvasStage";
 import EffectSelector from "@/components/canvas/EffectSelector";
 import SettingsPanel from "@/components/canvas/SettingsPanel";
@@ -8,7 +9,6 @@ import ModeToggle from "@/components/canvas/ModeToggle";
 import ExportControls from "@/components/canvas/ExportControls";
 import ImageUploader from "@/components/canvas/ImageUploader";
 import VoiceInput from "@/components/canvas/VoiceInput";
-import CursorGlow from "@/components/canvas/CursorGlow";
 import { useCanvasEngine } from "@/hooks/useCanvasEngine";
 import { useInputManager } from "@/hooks/useInputManager";
 import { useSoundManager } from "@/hooks/useSoundManager";
@@ -19,28 +19,37 @@ import { EffectId } from "@/lib/types";
 export default function CanvasPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedEffects, setSelectedEffects] = useState<EffectId[]>(["sparkles"]);
-  const [mode, setMode] = useState<"single" | "multi">("single");
+  const [mode, setMode] = useState<"single" | "multi">("multi");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [interactionCount, setInteractionCount] = useState(0);
   const { theme, toggleTheme } = useTheme();
 
   const { engine, engineReady } = useCanvasEngine(canvasRef);
   const { playSound, setSoundType, soundEnabled, toggleSound } = useSoundManager();
   const { transcript, listening, startListening, stopListening } = useVoiceInput();
 
-  // Input manager only active when engine ready
-  useInputManager(canvasRef, engineReady ? engine : null, playSound, selectedEffects, mode);
+  // Wrap playSound to also count interactions (for auto-hiding sidebar)
+  const onInteraction = useCallback(() => {
+    playSound();
+    setInteractionCount((c) => c + 1);
+    // Auto-hide sidebar after 3 interactions
+    if (interactionCount >= 2) {
+      setSidebarOpen(false);
+    }
+  }, [playSound, interactionCount]);
 
-  // Apply selected effects
+  useInputManager(canvasRef, engineReady ? engine : null, onInteraction, selectedEffects, mode);
+
   useEffect(() => {
     if (engine && engineReady) {
       const active =
         mode === "single"
-          ? [selectedEffects[0] || "sparkles"]   // fallback to avoid undefined
+          ? [selectedEffects[0] || "sparkles"]
           : selectedEffects;
       engine.setActiveEffects(active);
     }
   }, [selectedEffects, mode, engine, engineReady]);
 
-  // Handle voice transcript as a custom text effect
   useEffect(() => {
     if (transcript && engine && engineReady) {
       engine.addEffect("customText", {
@@ -52,47 +61,76 @@ export default function CanvasPage() {
   }, [transcript, engine, engineReady]);
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === "neon"
-          ? "bg-gray-900 text-white"
-          : "bg-white text-luxury-charcoal"
-      }`}
-    >
-      <CursorGlow />
-      <div className="flex flex-col lg:flex-row">
-        <aside className="w-full lg:w-80 p-6 glass m-4 space-y-6">
-          <h2 className="font-serif text-2xl">Effects</h2>
-          <EffectSelector
-            selected={selectedEffects}
-            onChange={setSelectedEffects}
-            mode={mode}
-          />
-          <ModeToggle mode={mode} onChange={setMode} />
-          <SettingsPanel engine={engine} />
-          <SoundSelector
-            onSelect={setSoundType}
-            enabled={soundEnabled}
-            onToggle={toggleSound}
-          />
-          <ImageUploader onImage={(img) => engine?.setCustomImage(img)} />
-          <VoiceInput
-            listening={listening}
-            onStart={startListening}
-            onStop={stopListening}
-          />
-          <ExportControls canvasRef={canvasRef} />
-          <button
-            onClick={toggleTheme}
-            className="w-full rounded-full bg-luxury-gold py-2 text-white hover:bg-amber-600"
+    <div className="fixed inset-0 overflow-hidden bg-black">
+      {/* Canvas fills the entire screen */}
+      <CanvasStage ref={canvasRef} />
+
+      {/* Floating toggle button – always visible */}
+      <button
+        onClick={() => setSidebarOpen((o) => !o)}
+        className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl shadow-lg flex items-center justify-center text-lg hover:bg-white transition-all"
+        aria-label="Toggle sidebar"
+      >
+        {sidebarOpen ? "✕" : "☰"}
+      </button>
+
+      {/* Theme toggle */}
+      <button
+        onClick={toggleTheme}
+        className="fixed top-4 left-4 z-50 px-4 py-2 rounded-full bg-white/80 backdrop-blur-xl shadow-lg text-sm font-medium hover:bg-white transition-all"
+      >
+        {theme === "light" ? "🌙 Neon" : "☀️ Light"}
+      </button>
+
+      {/* Interaction hint – fades out after first click */}
+      <AnimatePresence>
+        {interactionCount === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 flex items-center justify-center pointer-events-none"
           >
-            {theme === "light" ? "Neon Mode" : "Light Mode"}
-          </button>
-        </aside>
-        <main className="relative flex-1 m-4 rounded-2xl overflow-hidden shadow-2xl">
-          <CanvasStage ref={canvasRef} />
-        </main>
-      </div>
+            <p className="text-white/60 text-2xl font-serif tracking-wide">
+              tap anywhere to begin
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating sidebar – slides in from left */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.aside
+            initial={{ x: -400, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -400, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed left-4 top-20 bottom-4 z-40 w-80 glass overflow-y-auto p-6 space-y-5 shadow-2xl"
+          >
+            <h2 className="font-serif text-2xl text-luxury-charcoal">Effects</h2>
+            <ModeToggle mode={mode} onChange={setMode} />
+            <EffectSelector
+              selected={selectedEffects}
+              onChange={setSelectedEffects}
+              mode={mode}
+            />
+            <SettingsPanel engine={engine} />
+            <SoundSelector
+              onSelect={setSoundType}
+              enabled={soundEnabled}
+              onToggle={toggleSound}
+            />
+            <ImageUploader onImage={(img) => engine?.setCustomImage(img)} />
+            <VoiceInput
+              listening={listening}
+              onStart={startListening}
+              onStop={stopListening}
+            />
+            <ExportControls canvasRef={canvasRef} />
+          </motion.aside>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
