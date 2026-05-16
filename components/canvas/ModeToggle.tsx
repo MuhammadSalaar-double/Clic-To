@@ -1,3 +1,4 @@
+"use client";
 interface ModeToggleProps {
   mode: "single" | "multi";
   onChange: (mode: "single" | "multi") => void;
