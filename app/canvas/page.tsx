@@ -28,11 +28,10 @@ export default function CanvasPage() {
   const { playSound, setSoundType, soundEnabled, toggleSound } = useSoundManager();
   const { transcript, listening, startListening, stopListening } = useVoiceInput();
 
-  // Wrap playSound to also count interactions (for auto-hiding sidebar)
+  // Count interactions and auto‑hide sidebar after 3 taps
   const onInteraction = useCallback(() => {
     playSound();
     setInteractionCount((c) => c + 1);
-    // Auto-hide sidebar after 3 interactions
     if (interactionCount >= 2) {
       setSidebarOpen(false);
     }
