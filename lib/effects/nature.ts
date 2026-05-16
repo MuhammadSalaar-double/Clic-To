@@ -21,7 +21,6 @@ export function createSparkles(config: EffectConfig, _img?: HTMLImageElement | n
 }
 
 export function createFlowers(config: EffectConfig) {
-  // similar, but with petal-like shapes (circles) and pastel colors
   return Array.from({ length: 8 }, () => {
     return new Particle({
       x: config.x,
@@ -30,10 +29,100 @@ export function createFlowers(config: EffectConfig) {
       vy: -2 - Math.random() * 2,
       life: 1 + Math.random(),
       size: 8 + Math.random() * 8,
-      color: `hsl(${Math.random() * 60 + 300}, 80%, 70%)`, // pink/purple
+      color: `hsl(${Math.random() * 60 + 300}, 80%, 70%)`,
       type: "circle",
     });
   });
 }
 
-// ... leaves, butterflies, snow, rain, stars, clouds follow
+export function createLeaves(config: EffectConfig) {
+  const leafColors = ["#8B5A2B", "#A0522D", "#556B2F", "#6B8E23"];
+  return Array.from({ length: 10 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 10,
+      y: config.y + (Math.random() - 0.5) * 10,
+      vx: (Math.random() - 0.5) * 1,
+      vy: -1 - Math.random() * 2,
+      life: 2 + Math.random(),
+      size: 6 + Math.random() * 8,
+      color: leafColors[Math.floor(Math.random() * leafColors.length)],
+      type: "circle",
+    });
+  });
+}
+
+export function createButterflies(config: EffectConfig) {
+  const colors = ["#ff69b4", "#ff1493", "#ffb6c1", "#ffa07a"];
+  return Array.from({ length: 6 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 10,
+      y: config.y + (Math.random() - 0.5) * 10,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: -0.5 - Math.random() * 1.5,
+      life: 2 + Math.random() * 1.5,
+      size: 6 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      type: "circle",
+    });
+  });
+}
+
+export function createSnow(config: EffectConfig) {
+  return Array.from({ length: 20 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 30,
+      y: config.y + (Math.random() - 0.5) * 30,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: 1 + Math.random() * 1.5,
+      life: 3 + Math.random() * 2,
+      size: 3 + Math.random() * 5,
+      color: "#ffffff",
+      type: "circle",
+    });
+  });
+}
+
+export function createRain(config: EffectConfig) {
+  return Array.from({ length: 25 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 40,
+      y: config.y + (Math.random() - 0.5) * 10,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: 5 + Math.random() * 8,
+      life: 0.8 + Math.random() * 0.4,
+      size: 1 + Math.random() * 2,
+      color: "#a0c4ff",
+      type: "circle",
+    });
+  });
+}
+
+export function createStars(config: EffectConfig) {
+  return Array.from({ length: 15 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 20,
+      y: config.y + (Math.random() - 0.5) * 20,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      life: 2,
+      size: 2 + Math.random() * 3,
+      color: "#fffacd",
+      type: "circle",
+    });
+  });
+}
+
+export function createClouds(config: EffectConfig) {
+  return Array.from({ length: 8 }, () => {
+    return new Particle({
+      x: config.x + (Math.random() - 0.5) * 20,
+      y: config.y + (Math.random() - 0.5) * 5,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: -0.2 - Math.random() * 0.3,
+      life: 3 + Math.random() * 2,
+      size: 20 + Math.random() * 20,
+      color: "rgba(255, 255, 255, 0.7)",
+      type: "circle",
+    });
+  });
+}
